@@ -2,31 +2,41 @@ package org.example.thread;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class CopyRunnable implements Runnable, Inputable, Outputable {
 
-    long value;
+    BlockingQueue<Long> receivedQueue = new ArrayBlockingQueue<Long>(1);
     List<Inputable> outputs = new ArrayList<>();
 
     @Override
     public void run() {
-        for (Inputable output : outputs) {
-            output.receive(value);
+        try {
+            while (true) {
+                long received = receivedQueue.take();
+                for (Inputable output : outputs) {
+                    output.receive(received);
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
         }
     }
 
     @Override
     public void receive(long value) {
-        this.value = value;
+        try {
+            receivedQueue.put(value);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void addOutput(Inputable output) {
         this.outputs.add(output);
-    }
-
-    public void setValue(long value) {
-        this.value = value;
     }
 }

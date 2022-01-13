@@ -2,10 +2,13 @@ package org.example.thread;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class MultRunnable implements Runnable, Inputable, Outputable {
-    long value;
-    int n;
+
+    BlockingQueue<Long> receivedQueue = new ArrayBlockingQueue<Long>(10);
+    final int n;
     List<Inputable> outputs = new ArrayList<>();
 
     public MultRunnable(int n) {
@@ -14,15 +17,27 @@ public class MultRunnable implements Runnable, Inputable, Outputable {
 
     @Override
     public void run() {
-        value *= n;
-        for (Inputable output : outputs) {
-            output.receive(value);
+        try {
+            while (true) {
+                long received = receivedQueue.take();
+                for (Inputable output : outputs) {
+                    output.receive(received * n);
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
         }
     }
 
     @Override
     public void receive(long value) {
-        this.value = value;
+        try {
+            receivedQueue.put(value);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
     }
 
     @Override

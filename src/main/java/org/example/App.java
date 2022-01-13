@@ -30,7 +30,7 @@ public class App
         copyRunnable.addOutput(multBy3);
         copyRunnable.addOutput(multBy5);
 
-        copyRunnable.setValue(1);
+        copyRunnable.receive(1);
 
         Thread multBy2Thread = new Thread(multBy2),
                 multBy3Thread = new Thread(multBy3),
