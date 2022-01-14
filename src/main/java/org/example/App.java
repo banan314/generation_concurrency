@@ -5,10 +5,6 @@ import org.example.thread.InMergeRunnable;
 import org.example.thread.MultRunnable;
 import org.example.thread.PrintRunnable;
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     private static final Integer MULT_THREADS_NUMBER = 3;

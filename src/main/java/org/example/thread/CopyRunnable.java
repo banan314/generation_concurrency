@@ -25,6 +25,8 @@ public class CopyRunnable implements Runnable, Inputable, Outputable {
                 for (Inputable output : outputs) {
                     output.receive(received);
                 }
+                if(cyclicBarrier.isCanMultRun())
+                    cyclicBarrier.reset();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

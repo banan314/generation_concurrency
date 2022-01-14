@@ -1,17 +1,30 @@
 package org.example;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
 public class CyclicBarrier {
     final int initialCount;
-    Integer count;
+    boolean canMultRun = false;
+    CountDownLatch countDownLatch;
 
     public CyclicBarrier(Integer initialCount) {
         this.initialCount = initialCount;
-        this.count = initialCount;
+        this.countDownLatch = new CountDownLatch(initialCount);
+    }
+
+    public void updateCanMultRun(boolean canMultRun) {
+        this.canMultRun = canMultRun;
+    }
+
+    public boolean isCanMultRun() {
+        return this.canMultRun;
     }
 
     public void await() {
         try {
-            wait();
+            countDownLatch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();
@@ -19,17 +32,10 @@ public class CyclicBarrier {
     }
 
     public void countDown() {
-        count--;
-        if(count == 0)
-            notifyAll();
+        countDownLatch.countDown();
     }
 
-    public void reset() throws Exception {
-        if(count == 0)
-            count = initialCount;
-        else {
-            notifyAll();
-            throw new Exception("Some threads are waiting on the cyclic barier");
-        }
+    public void reset() {
+        countDownLatch = new CountDownLatch(initialCount);
     }
 }

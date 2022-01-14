@@ -23,9 +23,15 @@ public class MultRunnable implements Runnable, Inputable, Outputable {
     public void run() {
         try {
             while (true) {
-                long received = receivedQueue.take();
-                for (Inputable output : outputs) {
-                    output.receive(received * n);
+                if(cyclicBarrier.isCanMultRun()) {
+                    while(!receivedQueue.isEmpty()) {
+                        long received = receivedQueue.take();
+                        for (Inputable output : outputs) {
+                            output.receive(received * n);
+                        }
+                    }
+                    cyclicBarrier.countDown();
+                    cyclicBarrier.await();
                 }
             }
         } catch (InterruptedException e) {
