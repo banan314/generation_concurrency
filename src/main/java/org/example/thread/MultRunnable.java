@@ -2,12 +2,12 @@ package org.example.thread;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MultRunnable implements Runnable, Inputable, Outputable {
 
-    BlockingQueue<Long> receivedQueue = new ArrayBlockingQueue<Long>(10);
+    BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<Long>();
     final int n;
     List<Inputable> outputs = new ArrayList<>();
 

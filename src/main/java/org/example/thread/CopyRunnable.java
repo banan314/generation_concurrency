@@ -2,12 +2,12 @@ package org.example.thread;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class CopyRunnable implements Runnable, Inputable, Outputable {
 
-    BlockingQueue<Long> receivedQueue = new ArrayBlockingQueue<Long>(1);
+    BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<Long>();
     List<Inputable> outputs = new ArrayList<>();
 
     @Override
