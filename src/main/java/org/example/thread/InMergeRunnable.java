@@ -11,10 +11,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class InMergeRunnable implements Runnable, Inputable, Outputable {
 
-    BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<Long>();
-    CyclicBarrier cyclicBarrier;
-    List<Inputable> outputs = new ArrayList<>();
-    PriorityQueue<Long> priorityQueue = new UniquePriorityQueue<>();
+    final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
+    final CyclicBarrier cyclicBarrier;
+    final List<Inputable> outputs = new ArrayList<>();
+    final PriorityQueue<Long> priorityQueue = new UniquePriorityQueue<>();
     long min, max;
 
     public InMergeRunnable(CyclicBarrier cyclicBarrier) {
@@ -26,13 +26,20 @@ public class InMergeRunnable implements Runnable, Inputable, Outputable {
         try {
             while (true) {
                 cyclicBarrier.await();
-                cyclicBarrier.updateCanMultRun(false);
+                synchronized(this) {
+                    cyclicBarrier.setMultRunAllowed(false);
+                    cyclicBarrier.setMergingComplete(false);
+                }
                 while(!receivedQueue.isEmpty()) {
                     long received = receivedQueue.take();
                     priorityQueue.add(received);
                 }
                 if(!priorityQueue.isEmpty()) {
                     min = priorityQueue.peek();
+
+                    // maximum number to which we pass the numbers from the priority queue. The minimum factor is 2, and
+                    // we pass a number which equals min in a batch from the copy thread. So the minimum number in the next
+                    // batch is equal to max = 2 * min
                     max = 2 * min;
                 }
                 while(!priorityQueue.isEmpty()) {
@@ -44,7 +51,7 @@ public class InMergeRunnable implements Runnable, Inputable, Outputable {
                     } else
                         break;
                 }
-                cyclicBarrier.updateCanMultRun(true);
+                cyclicBarrier.setMergingComplete(true);
                 cyclicBarrier.reset();
             }
         } catch (InterruptedException e) {

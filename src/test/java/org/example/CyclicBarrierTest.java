@@ -9,12 +9,6 @@ public class CyclicBarrierTest extends TestCase {
     CyclicBarrier cyclicBarrier = new CyclicBarrier(1);
     Thread worker;
 
-//    public void setUp() throws Exception {
-//
-//
-//        super.setUp();
-//    }
-
     public void tearDown() throws Exception {
         worker.interrupt();
         worker.join();

@@ -9,7 +9,7 @@ public class App
 {
     private static final Integer MULT_THREADS_NUMBER = 3;
 
-    public static void main( String[] args ) throws InterruptedException {
+    public static void main( String[] args ) {
 
         CyclicBarrier cyclicBarrier = new CyclicBarrier(MULT_THREADS_NUMBER);
 
@@ -45,7 +45,6 @@ public class App
         inMergeThread.start();
         printThread.start();
 
-//        TimeUnit.MILLISECONDS.sleep(100);
-        System.out.println( "Hello World!" );
+        System.out.println( "Generate numbers of the form 2^k * 3^m * 5^n" );
     }
 }

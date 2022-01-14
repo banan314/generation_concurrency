@@ -1,12 +1,12 @@
 package org.example;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class CyclicBarrier {
+
     final int initialCount;
-    boolean canMultRun = true;
+    boolean multRunAllowed = true;
+    boolean mergingComplete = true;
     CountDownLatch countDownLatch;
 
     public CyclicBarrier(Integer initialCount) {
@@ -14,12 +14,20 @@ public class CyclicBarrier {
         this.countDownLatch = new CountDownLatch(initialCount);
     }
 
-    public void updateCanMultRun(boolean canMultRun) {
-        this.canMultRun = canMultRun;
+    public boolean isMultRunAllowed() {
+        return this.multRunAllowed;
     }
 
-    public boolean isCanMultRun() {
-        return this.canMultRun;
+    public void setMultRunAllowed(boolean canMultRun) {
+        this.multRunAllowed = canMultRun;
+    }
+
+    public boolean isMergingComplete() {
+        return mergingComplete;
+    }
+
+    public void setMergingComplete(boolean mergingComplete) {
+        this.mergingComplete = mergingComplete;
     }
 
     public void await() {
@@ -37,9 +45,5 @@ public class CyclicBarrier {
 
     public void reset() {
         countDownLatch = new CountDownLatch(initialCount);
-    }
-
-    public long getCount() {
-        return countDownLatch.getCount();
     }
 }

@@ -9,9 +9,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class CopyRunnable implements Runnable, Inputable, Outputable {
 
-    BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<Long>();
-    CyclicBarrier cyclicBarrier;
-    List<Inputable> outputs = new ArrayList<>();
+    final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
+    final CyclicBarrier cyclicBarrier;
+    final List<Inputable> outputs = new ArrayList<>();
 
     public CopyRunnable(CyclicBarrier cyclicBarrier) {
         this.cyclicBarrier = cyclicBarrier;
@@ -25,6 +25,8 @@ public class CopyRunnable implements Runnable, Inputable, Outputable {
                 for (Inputable output : outputs) {
                     output.receive(received);
                 }
+                if(!(cyclicBarrier.isMultRunAllowed()) && cyclicBarrier.isMergingComplete())
+                    cyclicBarrier.setMultRunAllowed(true);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

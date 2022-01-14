@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 public class MultRunnable implements Runnable, Inputable, Outputable {
 
     final int n;
-    BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<Long>();
-    CyclicBarrier cyclicBarrier;
-    List<Inputable> outputs = new ArrayList<>();
+    final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
+    final CyclicBarrier cyclicBarrier;
+    final List<Inputable> outputs = new ArrayList<>();
 
     public MultRunnable(int n, CyclicBarrier cyclicBarrier) {
         this.n = n;
@@ -24,7 +24,7 @@ public class MultRunnable implements Runnable, Inputable, Outputable {
     public void run() {
         try {
             while (true) {
-                if(cyclicBarrier.isCanMultRun()) {
+                if(cyclicBarrier.isMultRunAllowed()) {
                     while(!receivedQueue.isEmpty()) {
                         long received = receivedQueue.take();
                         for (Inputable output : outputs) {

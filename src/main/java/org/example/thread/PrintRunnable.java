@@ -1,12 +1,11 @@
 package org.example.thread;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class PrintRunnable implements Runnable, Inputable {
 
-    BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<Long>();
+    final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
 
     @Override
     public void run() {
