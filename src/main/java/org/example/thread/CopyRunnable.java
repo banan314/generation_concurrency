@@ -1,5 +1,7 @@
 package org.example.thread;
 
+import org.example.CyclicBarrier;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -8,7 +10,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class CopyRunnable implements Runnable, Inputable, Outputable {
 
     BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<Long>();
+    CyclicBarrier cyclicBarrier;
     List<Inputable> outputs = new ArrayList<>();
+
+    public CopyRunnable(CyclicBarrier cyclicBarrier) {
+        this.cyclicBarrier = cyclicBarrier;
+    }
 
     @Override
     public void run() {

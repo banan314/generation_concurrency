@@ -5,20 +5,23 @@ import org.example.thread.InMergeRunnable;
 import org.example.thread.MultRunnable;
 import org.example.thread.PrintRunnable;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Hello world!
  *
  */
 public class App 
 {
+    private static final Integer MULT_THREADS_NUMBER = 3;
+
     public static void main( String[] args ) throws InterruptedException {
-        MultRunnable multBy2 = new MultRunnable(2),
-                multBy3 = new MultRunnable(3),
-                multBy5 = new MultRunnable(5);
-        CopyRunnable copyRunnable = new CopyRunnable();
-        InMergeRunnable inMergeRunnable = new InMergeRunnable();
+
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(MULT_THREADS_NUMBER);
+
+        MultRunnable multBy2 = new MultRunnable(2, cyclicBarrier),
+                multBy3 = new MultRunnable(3, cyclicBarrier),
+                multBy5 = new MultRunnable(5, cyclicBarrier);
+        CopyRunnable copyRunnable = new CopyRunnable(cyclicBarrier);
+        InMergeRunnable inMergeRunnable = new InMergeRunnable(cyclicBarrier);
         PrintRunnable printRunnable = new PrintRunnable();
 
         multBy2.addOutput(inMergeRunnable);
