@@ -6,6 +6,7 @@ import java.util.concurrent.BlockingQueue;
 
 import org.example.CyclicBarrier;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class MultRunnable implements Runnable, Inputable, Outputable {
 
@@ -31,7 +32,7 @@ public class MultRunnable implements Runnable, Inputable, Outputable {
                         }
                     }
                     cyclicBarrier.countDown();
-                    cyclicBarrier.await();
+                    TimeUnit.MILLISECONDS.sleep(50);
                 }
             }
         } catch (InterruptedException e) {

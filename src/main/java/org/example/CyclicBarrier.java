@@ -38,4 +38,8 @@ public class CyclicBarrier {
     public void reset() {
         countDownLatch = new CountDownLatch(initialCount);
     }
+
+    public long getCount() {
+        return countDownLatch.getCount();
+    }
 }
