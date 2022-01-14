@@ -6,7 +6,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class CyclicBarrier {
     final int initialCount;
-    boolean canMultRun = false;
+    boolean canMultRun = true;
     CountDownLatch countDownLatch;
 
     public CyclicBarrier(Integer initialCount) {

@@ -31,8 +31,10 @@ public class InMergeRunnable implements Runnable, Inputable, Outputable {
                     long received = receivedQueue.take();
                     priorityQueue.add(received);
                 }
-                min = priorityQueue.peek();
-                max = 2 * min;
+                if(!priorityQueue.isEmpty()) {
+                    min = priorityQueue.peek();
+                    max = 2 * min;
+                }
                 while(!priorityQueue.isEmpty()) {
                     if(priorityQueue.peek() < max) {
                         long value = priorityQueue.poll();
