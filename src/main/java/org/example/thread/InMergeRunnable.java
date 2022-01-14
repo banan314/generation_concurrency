@@ -45,6 +45,7 @@ public class InMergeRunnable implements Runnable, Inputable, Outputable {
                         break;
                 }
                 cyclicBarrier.updateCanMultRun(true);
+                cyclicBarrier.reset();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
