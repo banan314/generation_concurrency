@@ -1,5 +1,6 @@
 package org.example.thread;
 
+import org.example.Configuration;
 import org.example.Scheduler;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class CopyRunnable implements Runnable, Receiver, Sender {
                 long received = receivedQueue.take();
                 for (Receiver output : outputs) {
                     output.receive(received);
-                    TimeUnit.MILLISECONDS.sleep(50);
+                    TimeUnit.MILLISECONDS.sleep(Configuration.SLEEP_TIMEOUT);
                 }
                 if(scheduler.isMergingComplete() && receivedQueue.isEmpty())
                     scheduler.setCopyComplete(true);
