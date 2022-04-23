@@ -1,5 +1,5 @@
 package org.example.thread;
 
-public interface Inputable {
+public interface Receiver {
     void receive(long value);
 }

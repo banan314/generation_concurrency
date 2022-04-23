@@ -8,12 +8,12 @@ import org.example.CyclicBarrier;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class MultRunnable implements Runnable, Inputable, Outputable {
+public class MultRunnable implements Runnable, Receiver, Sender {
 
     final int n;
     final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
     final CyclicBarrier cyclicBarrier;
-    final List<Inputable> outputs = new ArrayList<>();
+    final List<Receiver> outputs = new ArrayList<>();
 
     public MultRunnable(int n, CyclicBarrier cyclicBarrier) {
         this.n = n;
@@ -27,7 +27,7 @@ public class MultRunnable implements Runnable, Inputable, Outputable {
                 if(cyclicBarrier.isMultRunAllowed()) {
                     while(!receivedQueue.isEmpty()) {
                         long received = receivedQueue.take();
-                        for (Inputable output : outputs) {
+                        for (Receiver output : outputs) {
                             output.receive(received * n);
                         }
                     }
@@ -52,7 +52,7 @@ public class MultRunnable implements Runnable, Inputable, Outputable {
     }
 
     @Override
-    public void addOutput(Inputable output) {
+    public void addOutput(Receiver output) {
         this.outputs.add(output);
     }
 }

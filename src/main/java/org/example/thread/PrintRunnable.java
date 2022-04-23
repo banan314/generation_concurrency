@@ -3,7 +3,7 @@ package org.example.thread;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class PrintRunnable implements Runnable, Inputable {
+public class PrintRunnable implements Runnable, Receiver {
 
     final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
 

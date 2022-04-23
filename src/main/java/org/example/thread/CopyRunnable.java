@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class CopyRunnable implements Runnable, Inputable, Outputable {
+public class CopyRunnable implements Runnable, Receiver, Sender {
 
     final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
     final CyclicBarrier cyclicBarrier;
-    final List<Inputable> outputs = new ArrayList<>();
+    final List<Receiver> outputs = new ArrayList<>();
 
     public CopyRunnable(CyclicBarrier cyclicBarrier) {
         this.cyclicBarrier = cyclicBarrier;
@@ -22,7 +22,7 @@ public class CopyRunnable implements Runnable, Inputable, Outputable {
         try {
             while (true) {
                 long received = receivedQueue.take();
-                for (Inputable output : outputs) {
+                for (Receiver output : outputs) {
                     output.receive(received);
                 }
                 if(!(cyclicBarrier.isMultRunAllowed()) && cyclicBarrier.isMergingComplete())
@@ -45,7 +45,7 @@ public class CopyRunnable implements Runnable, Inputable, Outputable {
     }
 
     @Override
-    public void addOutput(Inputable output) {
+    public void addOutput(Receiver output) {
         this.outputs.add(output);
     }
 }

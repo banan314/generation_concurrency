@@ -9,11 +9,11 @@ import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class InMergeRunnable implements Runnable, Inputable, Outputable {
+public class InMergeRunnable implements Runnable, Receiver, Sender {
 
     final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
     final CyclicBarrier cyclicBarrier;
-    final List<Inputable> outputs = new ArrayList<>();
+    final List<Receiver> outputs = new ArrayList<>();
     final PriorityQueue<Long> priorityQueue = new UniquePriorityQueue<>();
     long min, max;
 
@@ -45,7 +45,7 @@ public class InMergeRunnable implements Runnable, Inputable, Outputable {
                 while(!priorityQueue.isEmpty()) {
                     if(priorityQueue.peek() < max) {
                         long value = priorityQueue.poll();
-                        for (Inputable output : outputs) {
+                        for (Receiver output : outputs) {
                             output.receive(value);
                         }
                     } else
@@ -71,7 +71,7 @@ public class InMergeRunnable implements Runnable, Inputable, Outputable {
     }
 
     @Override
-    public void addOutput(Inputable output) {
+    public void addOutput(Receiver output) {
         this.outputs.add(output);
     }
 }
