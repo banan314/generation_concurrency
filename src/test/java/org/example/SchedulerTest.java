@@ -4,9 +4,9 @@ import junit.framework.TestCase;
 
 import java.util.concurrent.TimeUnit;
 
-public class CyclicBarrierTest extends TestCase {
+public class SchedulerTest extends TestCase {
 
-    CyclicBarrier cyclicBarrier = new CyclicBarrier(1);
+    Scheduler scheduler = new Scheduler(1);
     Thread worker;
 
     public void tearDown() throws Exception {
@@ -20,14 +20,14 @@ public class CyclicBarrierTest extends TestCase {
             public void run() {
                 try {
                     TimeUnit.MILLISECONDS.sleep(100);
-                    cyclicBarrier.countDown();
+                    scheduler.notifyThatMultComplete();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
         });
         worker.start();
-        cyclicBarrier.await();
+        scheduler.awaitMultRun();
         assertEquals(true, true);
     }
 
@@ -38,7 +38,7 @@ public class CyclicBarrierTest extends TestCase {
                 try {
                     while(true) {
                         TimeUnit.MILLISECONDS.sleep(100);
-                        cyclicBarrier.countDown();
+                        scheduler.notifyThatMultComplete();
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -46,9 +46,9 @@ public class CyclicBarrierTest extends TestCase {
             }
         });
         worker.start();
-        cyclicBarrier.await();
-        cyclicBarrier.reset();
-        cyclicBarrier.await();
+        scheduler.awaitMultRun();
+        scheduler.allowMultToRun();
+        scheduler.awaitMultRun();
         assertEquals(true, true);
     }
 }

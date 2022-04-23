@@ -1,20 +1,21 @@
 package org.example.thread;
 
-import org.example.CyclicBarrier;
+import org.example.Scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class CopyRunnable implements Runnable, Receiver, Sender {
 
     final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
-    final CyclicBarrier cyclicBarrier;
+    final Scheduler scheduler;
     final List<Receiver> outputs = new ArrayList<>();
 
-    public CopyRunnable(CyclicBarrier cyclicBarrier) {
-        this.cyclicBarrier = cyclicBarrier;
+    public CopyRunnable(Scheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
     @Override
@@ -24,9 +25,10 @@ public class CopyRunnable implements Runnable, Receiver, Sender {
                 long received = receivedQueue.take();
                 for (Receiver output : outputs) {
                     output.receive(received);
+                    TimeUnit.MILLISECONDS.sleep(50);
                 }
-                if(!(cyclicBarrier.isMultRunAllowed()) && cyclicBarrier.isMergingComplete())
-                    cyclicBarrier.setMultRunAllowed(true);
+                if(scheduler.isMergingComplete() && receivedQueue.isEmpty())
+                    scheduler.setCopyComplete(true);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

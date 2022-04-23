@@ -4,35 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-import org.example.CyclicBarrier;
+import org.example.Scheduler;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 public class MultRunnable implements Runnable, Receiver, Sender {
 
     final int n;
     final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
-    final CyclicBarrier cyclicBarrier;
+    final Scheduler scheduler;
     final List<Receiver> outputs = new ArrayList<>();
 
-    public MultRunnable(int n, CyclicBarrier cyclicBarrier) {
+    public MultRunnable(int n, Scheduler scheduler) {
         this.n = n;
-        this.cyclicBarrier = cyclicBarrier;
+        this.scheduler = scheduler;
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                if(cyclicBarrier.isMultRunAllowed()) {
+                if(scheduler.isMergingComplete()) {
                     while(!receivedQueue.isEmpty()) {
                         long received = receivedQueue.take();
                         for (Receiver output : outputs) {
                             output.receive(received * n);
                         }
                     }
-                    cyclicBarrier.countDown();
-                    TimeUnit.MILLISECONDS.sleep(50);
+                    if(scheduler.isCopyComplete() && receivedQueue.isEmpty())
+                        scheduler.notifyThatMultComplete();
                 }
             }
         } catch (InterruptedException e) {

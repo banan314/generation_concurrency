@@ -11,13 +11,13 @@ public class App
 
     public static void main( String[] args ) {
 
-        CyclicBarrier cyclicBarrier = new CyclicBarrier(MULT_THREADS_NUMBER);
+        Scheduler scheduler = new Scheduler(MULT_THREADS_NUMBER);
 
-        MultRunnable multBy2 = new MultRunnable(2, cyclicBarrier),
-                multBy3 = new MultRunnable(3, cyclicBarrier),
-                multBy5 = new MultRunnable(5, cyclicBarrier);
-        CopyRunnable copyRunnable = new CopyRunnable(cyclicBarrier);
-        InMergeRunnable inMergeRunnable = new InMergeRunnable(cyclicBarrier);
+        MultRunnable multBy2 = new MultRunnable(2, scheduler),
+                multBy3 = new MultRunnable(3, scheduler),
+                multBy5 = new MultRunnable(5, scheduler);
+        CopyRunnable copyRunnable = new CopyRunnable(scheduler);
+        InMergeRunnable inMergeRunnable = new InMergeRunnable(scheduler);
         PrintRunnable printRunnable = new PrintRunnable();
 
         multBy2.addOutput(inMergeRunnable);

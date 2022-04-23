@@ -1,6 +1,6 @@
 package org.example.thread;
 
-import org.example.CyclicBarrier;
+import org.example.Scheduler;
 import org.example.UniquePriorityQueue;
 
 import java.util.ArrayList;
@@ -12,24 +12,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class InMergeRunnable implements Runnable, Receiver, Sender {
 
     final BlockingQueue<Long> receivedQueue = new LinkedBlockingQueue<>();
-    final CyclicBarrier cyclicBarrier;
+    final Scheduler scheduler;
     final List<Receiver> outputs = new ArrayList<>();
     final PriorityQueue<Long> priorityQueue = new UniquePriorityQueue<>();
     long min, max;
 
-    public InMergeRunnable(CyclicBarrier cyclicBarrier) {
-        this.cyclicBarrier = cyclicBarrier;
+    public InMergeRunnable(Scheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                cyclicBarrier.await();
-                synchronized(this) {
-                    cyclicBarrier.setMultRunAllowed(false);
-                    cyclicBarrier.setMergingComplete(false);
-                }
+                scheduler.awaitMultRun();
+                scheduler.setMergingComplete(false);
                 while(!receivedQueue.isEmpty()) {
                     long received = receivedQueue.take();
                     priorityQueue.add(received);
@@ -43,7 +40,7 @@ public class InMergeRunnable implements Runnable, Receiver, Sender {
                     max = 2 * min;
                 }
                 while(!priorityQueue.isEmpty()) {
-                    if(priorityQueue.peek() < max) {
+                    if(priorityQueue.peek() <= max) {
                         long value = priorityQueue.poll();
                         for (Receiver output : outputs) {
                             output.receive(value);
@@ -51,8 +48,9 @@ public class InMergeRunnable implements Runnable, Receiver, Sender {
                     } else
                         break;
                 }
-                cyclicBarrier.setMergingComplete(true);
-                cyclicBarrier.reset();
+                scheduler.setMergingComplete(true);
+                scheduler.setCopyComplete(false);
+                scheduler.allowMultToRun();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
