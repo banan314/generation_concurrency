@@ -12,7 +12,7 @@ public class PrintRunnable implements Runnable, Receiver {
         try {
             while (true) {
                 long received = receivedQueue.take();
-                System.out.println(received);
+                System.out.print(received + " ");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
